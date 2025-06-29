@@ -1,6 +1,7 @@
 import serial
 import struct
 import crcmod
+import time
 
 # Packet structure:
 # <header byte 1><header byte 2><payload length><data/opcode><crc byte 1><crc byte 2>
@@ -24,12 +25,16 @@ class GTPacket:
 
     def receive(self):
         while True:
+            print("it1")
             byte = self.ser.read(1)
             if byte == b'\x47':  # look for first header byte
+                print("byte1")
                 second = self.ser.read(1)
                 if second == b'\x54':
+                    print("byte2")
                     length = self.ser.read(1)
                     if not length:
+                        print("not length")
                         continue
                     length_val = length[0]
                     payload = self.ser.read(length_val)
@@ -47,6 +52,7 @@ class GTPacket:
                         print(f"CRC mismatch! Expected {calc_crc:04X}, got {recv_crc:04X}")
                 else:
                     continue
+            print("it")
 
     def close(self):
         self.ser.close()
@@ -57,17 +63,22 @@ if __name__ == "__main__":
     device = MockSerial()
     device.open()
 
-    gt = GTPacket(port=device.port)
+    gt = GTPacket(port="/dev/pts/3")
 
     try:
         # Prepare a mock serial device
-        device.stub(receive_bytes=gt.build_packet(b'\x01\x02'), send_bytes=gt.build_packet(b'\x03\x04'))  # Mock packet: GT + length 2 + data 01 02 + CRC
+        device.stub(receive_bytes=gt.build_packet(b'\x01\x02'), send_bytes=gt.build_packet(b'\x01'))  # Mock packet: GT + length 2 + data 01+  CRC
 
         # Send command with opcode/data
-        gt.send(b'\x01\x02')
+        print("Sending:")
+        gt.send(b'\x03')
+        time.sleep(5)
 
         # Wait for a response
-        response = gt.receive()
-        print(f"Parsed Response: {response}")
+        # response = gt.receive()
+        # print(f"Parsed Response: {response}")
+    except Exception as e:
+        print(e)
     finally:
+        
         gt.close()

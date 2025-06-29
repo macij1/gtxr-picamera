@@ -1,15 +1,17 @@
 from picamera2 import Picamera2
-import datetime
+from datetime import datetime
 
 def init_camera():
-    picam2 = Picamera2()
+    picam2 = Picamera2(0)
     config = picam2.create_preview_configuration()
     picam2.configure(config)
     picam2.start()
     return picam2
 
 def record_video(picam2, path):
-    picam2.start_and_record_video(path, duration=30) # default length = 30mins
+    print("Starting recording")
+    print(path)
+    picam2.start_and_record_video(path, duration=120) # default length = 30mins
     return 0
 
 
