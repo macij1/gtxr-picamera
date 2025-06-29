@@ -15,17 +15,16 @@ source picamvenv/bin/activate
 echo "Installing Python packages..."
 pip install --upgrade pip
 
-# These are part of the standard library — don't need to install:
-# pip install time
-# pip install os
-
 pip install pyserial
 pip install crcmod
 
-# Optional: mock-serial (commented out)
-# pip install mock-serial
+# Optional: mock-serial (comment out for deployment)
+pip install mock-serial
 
 # Re-run apt install in case needed again (redundant)
 sudo apt install -y python3-picamera2 --no-install-recommends
+
+# Activate venvs and run python tasks if desired
+# source picamenv/bin/activate
 
 echo "Setup complete. Environment 'picamvenv' is ready and activated."
