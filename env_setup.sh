@@ -27,4 +27,4 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 # Activate venvs and run python tasks if desired
 # source picamenv/bin/activate
 
-echo "Setup complete. Environment 'picamvenv' is ready and activated."
+echo "Setup complete. Environment 'picamvenv' is ready."

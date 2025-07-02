@@ -13,10 +13,12 @@ Constantly listen for commands from the UART port
 Upon receival, parse and immediately complete the task
 """
 class CameraManager():
+    # Constants
     START_RECORDING_OPCODE = b'\x01'
     SELFIE_OPCODE = b'\x02'
     REPORT_SIZE_OPCODE = b'\x03'
     STOP_RECORDING = b'\x04'
+
     
     current_video_size = 0 
     camera_busy = False
@@ -26,7 +28,7 @@ class CameraManager():
         
         self.serial_portname = "/dev/pts/4"
         timestamp_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        self.main_video_path = f"/picam_runtime/{timestamp_str}-video.mp4"
+        self.main_video_path = f"/picam_runtime/"
         self.log_path = f"/picam_runtime/{timestamp_str}-main_log.txt"
         if not os.path.exists("/picam_runtime/"):
             os.makedirs("/picam_runtime/")  # Create the directory if it doesn't exist
@@ -68,27 +70,34 @@ class CameraManager():
     # Sends the file size through the GT serial port
     # An 8-byte integer represents the file size in bytes
     def send_update(self, serial_line : str):
-        size_bytes = self.current_video_size.to_bytes(8, byteorder='big')
-        self.gt_port.send(size_bytes)
+        try:
+            size_bytes = self.current_video_size.to_bytes(8, byteorder='big')
+            self.gt_port.send(size_bytes)
+        except Exception as e:
+            print("Error: Send unsucessful of current video size")
     
     # Continuously monitors the size of a file and saves timestamped logs to a file
     # Current size is saved for fats return if requested by a command
     def monitor_size(self):
         while True:
-            time.sleep(10)
-            if os.path.exists(self.log_path):
-                self.current_video_size = os.path.getsize(self.log_path) # size is saved in MB
-                # Log size
-                with open(self.log_path, "a") as logfile:
-                    size_str = f"Size: {float(self.current_video_size):.1f} bytes"
-                    timestamp = datetime.now().isoformat()
-                    entry = f"{timestamp} - Video size:{size_str}"
-                    logfile.write(entry + "\n")
-                    logfile.flush()
+            try:
+                time.sleep(30)
+                if os.path.exists(self.log_path):
+                    self.current_video_size = os.path.getsize(self.log_path) # size is saved in MB
+                    # Log size
+                    with open(self.log_path, "a") as logfile:
+                        size_str = f"Size: {float(self.current_video_size):.1f} bytes"
+                        timestamp = datetime.now().isoformat()
+                        entry = f"{timestamp} - Video size:{size_str}"
+                        logfile.write(entry + "\n")
+                        logfile.flush()
+            except Exception as e:
+                print("Error in monitor size thread")
+                print(e)
 
     def start(self):
         picam = camera_utils.init_camera()
-        camera_thread = threading.Thread(target=camera_utils.record_video, args = (picam, self.main_video_path))
+        camera_thread = threading.Thread(target=camera_utils.record_video_segments, args = (picam, self))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
         gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
 

@@ -25,7 +25,6 @@ class GTPacket:
 
     def receive(self):
         while True:
-            print("it1")
             byte = self.ser.read(1)
             if byte == b'\x47':  # look for first header byte
                 print("byte1")
