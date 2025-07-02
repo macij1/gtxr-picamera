@@ -37,21 +37,21 @@ class CameraManager():
         self.gt_port = None
         open_port_tries = 12 # 1 min
 
-        # Open serial port for UART communication with ADCS board
-        for i in range(open_port_tries):
-            try:
-                portname = try_ports()
-                if portname: 
-                    portname = self.serial_portname
-                    self.gt_port = gt_packet.GTPacket(self.serial_portname, 115200)
-                    break
-                else:
-                    print(f"Error in serial port opening: All ports were unsuccessful")
-                    continue
-            except Exception as e:
-                print(f"Error in serial port opening: {e}")
-            print("Waiting 5 secs")
-            time.sleep(5)
+        # # Open serial port for UART communication with ADCS board
+        # for i in range(open_port_tries):
+        #     try:
+        #         portname = try_ports()
+        #         if portname: 
+        #             portname = self.serial_portname
+        #             self.gt_port = gt_packet.GTPacket(self.serial_portname, 115200)
+        #             break
+        #         else:
+        #             print(f"Error in serial port opening: All ports were unsuccessful")
+        #             continue
+        #     except Exception as e:
+        #         print(f"Error in serial port opening: {e}")
+        #     print("Waiting 5 secs")
+        #     time.sleep(5)
 
         # Fall back to emergency recording
         if self.gt_port == None:

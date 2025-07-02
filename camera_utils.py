@@ -3,15 +3,20 @@ from datetime import datetime
 import os
 
 def init_camera():
-    picam2 = Picamera2(0)
+    try:
+        picam2 = Picamera2(0)
+    except Exception as e:
+        print("Error: camera not found:")
+        print(f"\t{e}")
     config = picam2.create_video_configuration(main={"fps":60})
     picam2.configure(config)
     picam2.start()
     return picam2
 
-def record_video(picam2, path):
+def record_video(picam2, camera_manager):
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     print("Starting recording")
-    print(path)
+    path = f"{camera_manager.main_video_path}video_{ts}.mp4"
     picam2.start_and_record_video(path, duration=7200) # default length = 2h
 
 # Records video segments. By default, 1 min segments for a total of 2 hours

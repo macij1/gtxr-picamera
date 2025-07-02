@@ -1,0 +1,13 @@
+[Unit]
+Description=Run my Python script at startup
+After=basic.target
+
+[Service]
+ExecStart=source /home/gtxr/gtxr-picamera/run_task.sh
+WorkingDirectory=/home/gtxr/gtxr-picamera
+User=gtxr
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
