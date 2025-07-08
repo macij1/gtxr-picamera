@@ -31,7 +31,7 @@ def record_and_pipe_video(picam2, camera_manager, duration = 120):
     width, height = 1920, 1080
     framerate = 30  # try 60 if you're confident in performance
     segment_length = 10  # seconds
-    output_pattern = f"{camera_manager.main_video_path}video_%03d.mp4"
+    output_pattern = f"{camera_manager.main_video_path}video%03d.mp4"
 
     # Start ffmpeg subprocess for segmentation
     ffmpeg = subprocess.Popen([
@@ -47,7 +47,10 @@ def record_and_pipe_video(picam2, camera_manager, duration = 120):
     ], stdin=subprocess.PIPE)
 
     # Start recording
-    picam2.start_recording(ffmpeg.stdin, format='h264')
+    print(f"Starting recording: {output_pattern}")
+    encoder = H264Encoder()
+    picam2.start_recording(encoder, ffmpeg.stdin)
+
 
     try:
         print("Recording... Press Ctrl+C to stop.")
