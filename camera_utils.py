@@ -1,5 +1,6 @@
 from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
+from picamera2.encoders import FileOutput
 from datetime import datetime
 import time
 import os
@@ -49,7 +50,10 @@ def record_and_pipe_video(picam2, camera_manager, duration = 120):
     # Start recording
     print(f"Starting recording: {output_pattern}")
     encoder = H264Encoder()
-    picam2.start_recording(encoder, ffmpeg.stdin)
+    encoder.output = FileOutput(ffmpeg.stdin)  # ✅ this line is what v0.3 expects
+
+    picam2.start()
+    picam2.start_recording(encoder)
 
 
     try:
