@@ -1,0 +1,3 @@
+[pytest11]
+pytest-mock-serial = mock_serial.pytest
+

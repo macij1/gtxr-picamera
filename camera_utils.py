@@ -48,4 +48,8 @@ def take_photo(picam2):
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = f"picam_runtime/{ts}-selfie.jpg"
     picam2.capture_file(path)
+<<<<<<< HEAD
     return path
+=======
+    return path
+>>>>>>> e480121 (Framerate set to 60fps)

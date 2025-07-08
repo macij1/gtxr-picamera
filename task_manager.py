@@ -29,7 +29,11 @@ class CameraManager():
         self.serial_portname = "/dev/pts/4"
         timestamp_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         self.main_video_path = f"picam_runtime/"
+<<<<<<< HEAD
         self.size_log_path = f"picam_runtime/{timestamp_str}-size__log.txt"
+=======
+        self.log_path = f"picam_runtime/{timestamp_str}-main_log.txt"
+>>>>>>> e480121 (Framerate set to 60fps)
         if not os.path.exists("picam_runtime/"):
             os.makedirs("picam_runtime/")  # Create the directory if it doesn't exist
             
