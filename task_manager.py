@@ -26,7 +26,6 @@ class CameraManager():
     
     def __init__(self):
         self.gt_buffer = []
-        self.gt_port = None
         self.serial_portname = "/dev/pts/4"
         timestamp_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         self.main_video_path = f"picam_runtime/"
