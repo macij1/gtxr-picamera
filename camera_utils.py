@@ -3,6 +3,7 @@ from picamera2.encoders import H264Encoder
 from datetime import datetime
 import time
 import os
+import subprocess
 
 def init_camera():
     picam2 = Picamera2()
@@ -24,6 +25,50 @@ def record_video(picam2, camera_manager, duration=120):
     time.sleep(duration)
     picam2.stop_recording()
     print("Recording successful")
+
+def record_and_pipe_video(picam2, camera_manager, duration = 120):
+    # Configuration
+    width, height = 1920, 1080
+    framerate = 30  # try 60 if you're confident in performance
+    segment_length = 10  # seconds
+    output_pattern = f"{camera_manager.main_video_path}voutput_%03d.mp4"
+    
+    # Start camera
+    picam2 = Picamera2()
+    video_config = picam2.create_video_configuration(
+        main={"size": (width, height), "format": "H264"},
+        controls={"FrameRate": framerate}
+    )
+    picam2.configure(video_config)
+
+    # Start ffmpeg subprocess for segmentation
+    ffmpeg = subprocess.Popen([
+        "ffmpeg",
+        "-f", "h264",              # raw H.264 input
+        "-framerate", str(framerate),
+        "-i", "pipe:0",            # from stdin
+        "-c", "copy",              # no re-encoding
+        "-f", "segment",
+        "-segment_time", str(segment_length),
+        "-reset_timestamps", "1",
+        output_pattern
+    ], stdin=subprocess.PIPE)
+
+    # Start recording
+    picam2.start()
+    picam2.start_recording(ffmpeg.stdin, format='h264')
+
+    try:
+        print("Recording... Press Ctrl+C to stop.")
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Stopping recording.")
+    finally:
+        picam2.stop_recording()
+        ffmpeg.stdin.close()
+        ffmpeg.wait()
+
 
 def record_video_segments(picam2, camera_manager, segment_length=60, total_duration=7200):
     encoder = H264Encoder()
@@ -48,8 +93,4 @@ def take_photo(picam2):
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = f"picam_runtime/{ts}-selfie.jpg"
     picam2.capture_file(path)
-<<<<<<< HEAD
     return path
-=======
-    return path
->>>>>>> e480121 (Framerate set to 60fps)
