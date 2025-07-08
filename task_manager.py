@@ -1,4 +1,3 @@
-import serial
 import threading
 from datetime import datetime, timedelta
 import os

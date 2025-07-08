@@ -41,8 +41,8 @@ def try_ports():
                 print(f"Connected to serial port: {port}")
                 ser.close()
                 return port
-        except (OSError, serial.SerialException):
-            print(f"Failed to open {port}")
+        except Exception as e:
+            print(f"Failed to open {port}: {e}")
             continue
     else:
         print("Critical Warning: No available serial ports from the list.")
