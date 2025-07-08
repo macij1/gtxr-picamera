@@ -13,8 +13,8 @@
 ++ '[' '!' nondestructive = nondestructive ']'
 ++ VIRTUAL_ENV=/home/gtxr/gtxr-picamera/picamvenv
 ++ export VIRTUAL_ENV
-++ _OLD_VIRTUAL_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-++ PATH=/home/gtxr/gtxr-picamera/picamvenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ _OLD_VIRTUAL_PATH=/home/gtxr/gtxr-picamera/picamvenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+++ PATH=/home/gtxr/gtxr-picamera/picamvenv/bin:/home/gtxr/gtxr-picamera/picamvenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
 ++ export PATH
 ++ '[' -n '' ']'
 ++ '[' -z '' ']'
@@ -26,3 +26,9 @@
 ++ '[' -n /bin/bash -o -n '' ']'
 ++ hash -r
 + sudo python -u task_manager.py
+Traceback (most recent call last):
+  File "/home/gtxr/gtxr-picamera/task_manager.py", line 6, in <module>
+    import gt_packet
+  File "/home/gtxr/gtxr-picamera/gt_packet.py", line 1, in <module>
+    import serial
+ModuleNotFoundError: No module named 'serial'
