@@ -31,7 +31,7 @@ def record_and_pipe_video(picam2, camera_manager, duration = 120):
     width, height = 1920, 1080
     framerate = 30  # try 60 if you're confident in performance
     segment_length = 10  # seconds
-    output_pattern = f"{camera_manager.main_video_path}voutput_%03d.mp4"
+    output_pattern = f"{camera_manager.main_video_path}video_%03d.mp4"
 
     # Start ffmpeg subprocess for segmentation
     ffmpeg = subprocess.Popen([
