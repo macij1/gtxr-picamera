@@ -1,3 +1,0 @@
-Running TC: b'\x01'
-2025-07-08T00:38:01.785641 - Video size:Size: 20.0 bytes
-2025-07-08T00:38:31.830550 - Video size:Size: 77.0 bytes
