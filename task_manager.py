@@ -109,7 +109,7 @@ class CameraManager():
 
     def start(self):
         picam = camera_utils.init_camera()
-        camera_thread = threading.Thread(target=camera_utils.record_video, args = (picam, self))
+        camera_thread = threading.Thread(target=camera_utils.record_video_segments, args = (picam, self))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
         gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
         
