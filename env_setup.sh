@@ -17,7 +17,6 @@ pip install --upgrade pip
 
 pip install pyserial
 pip install crcmod
-pip install glob
 
 # Optional: mock-serial (comment out for deployment)
 pip install mock-serial

@@ -6,7 +6,7 @@ set -x
 
 # Absolute path to your project directory
 PROJECT_DIR="/home/gtxr/gtxr-picamera"
-TOP_LOG_DIR="/home/gtxr/gtxr-picamera/logs/main_log.txt"
+TOP_LOG="/home/gtxr/gtxr-picamera/logs/main_log.txt"
 
 # Navigate to the project directory
 cd "$PROJECT_DIR"
@@ -15,9 +15,9 @@ cd "$PROJECT_DIR"
 source "picamvenv/bin/activate"
 
 # Check that the background process is running
-if ! pgrep -f "$SCRIPT" > /dev/null; then
-    echo "$(date): Starting $SCRIPT" >> "$LOG"
-    sudo python -u task_manager.py >> "$TOP_LOG_DIR" 2>&1 &
+if ! pgrep -f "task_manager.py" > /dev/null; then
+    echo "$(date): Starting task manager" >> "TOP_LOG"
+    sudo python -u task_manager.py >> "$TOP_LOG" 2>&1 &
 else
-    echo "$(date): $SCRIPT already running" >> "$LOG"
+    echo "$(date): $SCRIPT already running" >> "$TOP_LOG"
 fi
