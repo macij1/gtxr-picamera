@@ -83,7 +83,7 @@ def record_and_pipe_video(picam2, camera_manager, duration=None, stop_event=None
         ffmpeg.wait()
 
 def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None):
-    
+    segment_length = 30
     encoder = H264Encoder()
     picam2.start()
     i = 0

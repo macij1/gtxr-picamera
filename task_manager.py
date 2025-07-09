@@ -99,7 +99,7 @@ class CameraManager():
                 time.sleep(10)
                 print("Monitoring size")
                 # Get latest segment size
-                files = glob(f"{self.main_video_path}video%03d.mp4")
+                files = glob(f"{self.main_video_path}*")
                 print("Files: ")
                 if not files:
                     print("No files found in monitoring")
