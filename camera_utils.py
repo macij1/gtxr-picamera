@@ -39,7 +39,7 @@ def take_selfie(picam2):
 def record_and_pipe_video(picam2, camera_manager, duration=None, stop_event=None):
     # Configuration
     width, height = 1920, 1080
-    framerate = 60
+    framerate = 30
     segment_length = 10  # seconds
     output_pattern = f"{camera_manager.main_video_path}video%03d.mp4"
 

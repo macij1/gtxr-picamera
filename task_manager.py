@@ -24,8 +24,7 @@ class CameraManager():
         self.serial_portname = ""
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.main_video_path = f"videos_{ts}/"
-        timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-        self.size_log_path = f"logs/{timestamp}-size_log.txt"
+        self.size_log_path = f"logs/{ts}-size_log.txt"
         self.current_video_size = 0 
         self.video_counter = 0
         self.camera_busy = False
@@ -96,11 +95,10 @@ class CameraManager():
         print("\nStarting monitor thread")
         while True:
             try:
-                time.sleep(15)
+                time.sleep(5)
                 print("Monitoring size")
                 # Get latest segment size
                 files = glob(f"{self.main_video_path}*")
-                print("Files: ")
                 if not files:
                     print("No files found in monitoring")
                     return 0
@@ -110,9 +108,11 @@ class CameraManager():
 
                 # Log size
                 with open(self.size_log_path, "a") as logfile:
+                    camera_state_str = f"Camera is busy" if self.camera_busy else f"Camera is free"
+                    count_str = f"Number of recorded segments {float(self.video_counter):.1f} bytes"
                     size_str = f"Latest segment size: {float(self.current_video_size):.1f} bytes"
                     timestamp = datetime.now().isoformat()
-                    entry = f"{timestamp} - Video size:{size_str}"
+                    entry = f"{timestamp}: \t{count_str}\n\t{size_str}\n\t{camera_state_str}"
                     logfile.write(entry + "\n")
                     logfile.flush()
                     
