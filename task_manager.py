@@ -76,26 +76,27 @@ class CameraManager():
     # Sends the file size to the GT serial port
     # 8-byte integers represent the state of the camera, the number of video segments, and the latest segment size
     def send_update(self):
-	print("Starting telemetry thread")
+        print("Starting telemetry thread")
         while True:
             try:
                 time.sleep(30)
-		print("Forming telemtry gt packet")
+                print("Forming telemetry gt packet")
                 busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
                 video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
                 current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
                 payload = self.TELEMETRY_OPCODE + busy_byte + video_counter_bytes + current_video_size 
                 self.gt_port.send(payload)
             except Exception as e:
-                print(f"Error: Send unsuccessful of telemetry reporting")
+                print(f"Error in telemetry thread")
+                print(e)
         
     # Continuously monitors the size of a file and saves timestamped logs to a file
     def monitor_size(self):
-	print("Starting monitor thread")
+        print("Starting monitor thread")
         while True:
             try:
                 time.sleep(5)
-		print("Monitoring size")
+                print("Monitoring size")
                 # Get latest segment size
                 files = glob(f"{self.main_video_path}video%03d.mp4")
                 if not files:
@@ -123,7 +124,7 @@ class CameraManager():
 
         if self.gt_port:
             gt_packet_reader.start()
-            telemetry_thread = threading.start()
+            telemetry_thread.start()
             
 
         while True:
