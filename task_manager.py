@@ -23,7 +23,8 @@ class CameraManager():
         self.gt_buffer = []
         self.serial_portname = ""
         self.main_video_path = f"videos/"
-        self.size_log_path = f"logs/{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}-size_log.txt"
+        timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        self.size_log_path = f"logs/{timestamp}-size_log.txt"
         self.current_video_size = 0 
         self.video_counter = 0
         self.camera_busy = False
@@ -46,10 +47,11 @@ class CameraManager():
                     self.gt_port = gt_packet.GTPacket(self.serial_portname, 115200)
                     break
                 else:
-                    print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Error in serial port opening: All ports were unsuccessful")
+                    print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Error in serial port opening: All ports were unsuccessful")
+                    time.sleep(5)
                     continue
             except Exception as e:
-                print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Error in serial port opening: {e}")
+                print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Error in serial port opening: {e}")
             print("Waiting 5 secs")
             time.sleep(5)
 
@@ -57,7 +59,7 @@ class CameraManager():
     # Read telecommand 
     def gt_packet_reader(self):
         while True:
-            print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Started packet reader")
+            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Started packet reader")
             # Blocking serial read
             payload = self.gt_port.receive()
             tc = None
@@ -70,7 +72,7 @@ class CameraManager():
             else:
                 print("Error, found no tc in payload")
             if tc:
-                print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Found TC: {tc} in payload")
+                print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Found TC: {tc} in payload")
                 self.gt_buffer.append(tc)
 
     # Sends the file size to the GT serial port
@@ -79,9 +81,9 @@ class CameraManager():
         while True:
             try:
                 time.sleep(5)
-                busy_byte = (1 if self.camera_busy else 0).to_bytes(8, byteorder='big')
-                video_counter_bytes = self.video_counter.to_bytes(8, byteorder='big')
-                current_video_size = self.current_video_size.to_bytes(8, byteorder='big')
+                busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
+                video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
+                current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
                 payload = self.TELEMETRY_OPCODE + busy_byte + video_counter_bytes + current_video_size 
                 self.gt_port.send(payload)
             except Exception as e:
@@ -123,29 +125,29 @@ class CameraManager():
             try:
                 if self.gt_buffer:
                     tc = self.gt_buffer.pop()
-                    print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Running TC: {tc}")
+                    print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Running TC: {tc}")
                     # Log tc
                     with open(self.size_log_path, "a") as logfile:
-                        entry = f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")} Running TC: {tc}"
+                        entry = f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')} Running TC: {tc}"
                         logfile.write(entry + "\n")
                         logfile.flush()
 
                     # Manage Tasks
                     if tc is self.START_RECORDING_OPCODE:
                         if self.camera_busy:
-                            print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Camera busy, tc ignored")
+                            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Camera busy, tc ignored")
                         else:
                             # Start recording video and monitoring its size
                             self.camera_busy = True
                             camera_thread.start()
                             monitor_size_thread.start()
                     elif tc is self.STOP_RECORDING_OPCODE:
-                        print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Stopping video recording")
+                        print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stopping video recording")
                         stop_event.set()
                         self.camera_busy = False
                     elif tc is self.SELFIE_OPCODE:
                         self.camera_busy = True
-                        print(f"{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}: Taking a picture")
+                        print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Taking a picture")
                         time.sleep(3) # 3 second delay
                         camera_utils.take_selfie(picam)
                         self.camera_busy = False

@@ -12,7 +12,7 @@ possible_ports = [
     "/dev/serial1",
     "/dev/ttyUSB0",
     "/dev/ttyUSB1",
-    "/dev/ttyUSB2"
+    "/dev/ttyUSB2",
     "/dev/ttyACM0",
     "/dev/ttyACM1",
     "/dev/ttyACM2",
@@ -36,13 +36,13 @@ def try_ports():
     ser = None
     for port in possible_ports:
         try:
-            if not os.path.exists(port):
+            if os.path.exists(port):
                 ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
                 print(f"Connected to serial port: {port}")
                 ser.close()
                 return port
         except Exception as e:
-            print(f"Failed to open {port}: {e}")
+            # print(f"Failed to open {port}: {e}")
             continue
     else:
         print("Critical Warning: No available serial ports from the list.")

@@ -5,6 +5,7 @@ import time
 
 # Packet structure:
 # <header byte 1><header byte 2><payload length><data/opcode><crc byte 1><crc byte 2>
+# Example: 00'
 HEADER = bytes([0x47, 0x54])  # 'GT'
 CRC_FUNC = crcmod.mkCrcFun(0x11021, rev=False, initCrc=0xFFFF, xorOut=0) # CRC-16-CCITT-FALSE
 
@@ -70,7 +71,7 @@ if __name__ == "__main__":
 
         # Send command with opcode/data
         print("Sending:")
-        gt.send(b'\x03')
+        gt.send(b'\x01')
         time.sleep(5)
 
         # Wait for a response
