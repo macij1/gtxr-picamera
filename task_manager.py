@@ -131,12 +131,10 @@ class CameraManager():
         stop_event = threading.Event()
         camera_thread = threading.Thread(target=camera_utils.record_h264_segments, args = (picam, self, 7200, stop_event))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
-        telemetry_thread = threading.Thread(target=self.send_update)
         gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
 
         if self.gt_port:
             gt_packet_reader.start()
-            telemetry_thread.start()
             
 
         while True:
