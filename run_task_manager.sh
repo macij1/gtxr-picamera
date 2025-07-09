@@ -16,7 +16,7 @@ source "picamvenv/bin/activate"
 
 # Check that the background process is running
 if ! pgrep -f "task_manager.py" > /dev/null; then
-    echo "$(date): Starting task manager" >> "TOP_LOG"
+    echo "$(date): Starting task manager" >> "$TOP_LOG"
     sudo python -u task_manager.py >> "$TOP_LOG" 2>&1 &
 else
     echo "$(date): $SCRIPT already running" >> "$TOP_LOG"
