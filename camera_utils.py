@@ -10,7 +10,7 @@ def init_camera():
     picam2 = Picamera2()
     config = picam2.create_video_configuration(
         main={"size": (1920, 1080)},  # Resolution
-        controls={"FrameDurationLimits": (16666, 16666)}  # ~60fps
+        controls={"FrameDurationLimits": (33333, 33333)}  # ~60fps
     )
     picam2.configure(config)
     picam2.start()  # Don't use show_preview on headless
