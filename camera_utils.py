@@ -82,6 +82,29 @@ def record_and_pipe_video(picam2, camera_manager, duration=None, stop_event=None
         ffmpeg.stdin.close()
         ffmpeg.wait()
 
+def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None):
+    
+    encoder = H264Encoder()
+    picam2.start()
+    i = 0
+    start_time = time.time()
+    try:
+        while not (stop_event and stop_event.is_set()):
+            filename = f"{camera_manager.main_video_path}video_{i}.h264"
+            print(f"Recording segment: {filename}")
+            picam2.start_recording(encoder, filename)
+            time.sleep(segment_length)
+            picam2.stop_recording()
+            i += 1
+            if i > 100 and duration and (time.time() - start_time) >= duration: 
+                print("Duration reached. Ending recording.")
+                break
+    except KeyboardInterrupt:
+        print("Stopping recording due to keyboard interrupt.")
+    finally:
+        picam2.stop_recording()
+        picam2.stop()
+
 
 ####### Deprecated functionalities:
 
@@ -99,22 +122,5 @@ def record_video(picam2, camera_manager, duration=120):
     except Exception as e:
         print(f"Error, Photo Unsuccessful: {e}")
 
-# Segmented video in .h264 format, deprecated
-def record_video_segments(picam2, camera_manager, segment_length=60, total_duration=7200):
-    encoder = H264Encoder()
-    picam2.encoder = encoder
 
-    start_time = datetime.now()
-    elapsed = 0
-    while elapsed < total_duration:
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        path = f"{camera_manager.main_video_path}video_{ts}.h264"
-        print(f"Recording segment: {path}")
-        picam2.start_recording(encoder, path)
-        time.sleep(segment_length)
-        picam2.stop_recording()
-        camera_manager.current_video_size += os.path.getsize(path)
-        elapsed = (datetime.now() - start_time).total_seconds()
 
-    picam2.stop()
-    return 0

@@ -96,7 +96,7 @@ class CameraManager():
         print("\nStarting monitor thread")
         while True:
             try:
-                time.sleep(5)
+                time.sleep(10)
                 print("Monitoring size")
                 # Get latest segment size
                 files = glob(f"{self.main_video_path}video%03d.mp4")
@@ -121,7 +121,7 @@ class CameraManager():
     def start(self):
         picam = camera_utils.init_camera()
         stop_event = threading.Event()
-        camera_thread = threading.Thread(target=camera_utils.record_and_pipe_video, args = (picam, self, 7200, stop_event))
+        camera_thread = threading.Thread(target=camera_utils.record_h264_segments, args = (picam, self, 7200, stop_event))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
         telemetry_thread = threading.Thread(target=self.send_update)
         gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
