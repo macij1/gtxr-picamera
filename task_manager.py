@@ -22,7 +22,8 @@ class CameraManager():
     def __init__(self):
         self.gt_buffer = []
         self.serial_portname = ""
-        self.main_video_path = f"videos/"
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.main_video_path = f"videos_{ts}/"
         timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
         self.size_log_path = f"logs/{timestamp}-size_log.txt"
         self.current_video_size = 0 
@@ -76,7 +77,7 @@ class CameraManager():
     # Sends the file size to the GT serial port
     # 8-byte integers represent the state of the camera, the number of video segments, and the latest segment size
     def send_update(self):
-        print("Starting telemetry thread")
+        print("\nStarting telemetry thread")
         while True:
             try:
                 time.sleep(30)
@@ -92,17 +93,20 @@ class CameraManager():
         
     # Continuously monitors the size of a file and saves timestamped logs to a file
     def monitor_size(self):
-        print("Starting monitor thread")
+        print("\nStarting monitor thread")
         while True:
             try:
                 time.sleep(5)
                 print("Monitoring size")
                 # Get latest segment size
                 files = glob(f"{self.main_video_path}video%03d.mp4")
+                print("Files: ")
                 if not files:
+                    print("No files found in monitoring")
                     return 0
+                self.video_counter = len(files)
                 latest_file = max(files, key=os.path.getctime)
-                self.current_video_size =  os.path.getsize(latest_file)
+                self.current_video_size = os.path.getsize(latest_file)
                 # Log size
                 with open(self.size_log_path, "a") as logfile:
                     size_str = f"Latest segment size: {float(self.current_video_size):.1f} bytes"
