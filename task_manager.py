@@ -52,8 +52,6 @@ class CameraManager():
                     continue
             except Exception as e:
                 print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Error in serial port opening: {e}")
-            print("Waiting 5 secs")
-            time.sleep(5)
 
     
     # Read telecommand 
@@ -77,10 +75,12 @@ class CameraManager():
 
     # Sends the file size to the GT serial port
     # 8-byte integers represent the state of the camera, the number of video segments, and the latest segment size
-    def send_update(self, serial_line : str):
+    def send_update(self):
+	print("Starting telemetry thread")
         while True:
             try:
-                time.sleep(5)
+                time.sleep(30)
+		print("Forming telemtry gt packet")
                 busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
                 video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
                 current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
@@ -91,9 +91,11 @@ class CameraManager():
         
     # Continuously monitors the size of a file and saves timestamped logs to a file
     def monitor_size(self):
+	print("Starting monitor thread")
         while True:
             try:
                 time.sleep(5)
+		print("Monitoring size")
                 # Get latest segment size
                 files = glob(f"{self.main_video_path}video%03d.mp4")
                 if not files:
@@ -116,10 +118,13 @@ class CameraManager():
         stop_event = threading.Event()
         camera_thread = threading.Thread(target=camera_utils.record_and_pipe_video, args = (picam, self, 7200, stop_event))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
+        telemetry_thread = threading.Thread(target=self.send_update)
         gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
 
         if self.gt_port:
             gt_packet_reader.start()
+            telemetry_thread = threading.start()
+            
 
         while True:
             try:
@@ -142,15 +147,21 @@ class CameraManager():
                             camera_thread.start()
                             monitor_size_thread.start()
                     elif tc is self.STOP_RECORDING_OPCODE:
-                        print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stopping video recording")
-                        stop_event.set()
-                        self.camera_busy = False
+                        if not self.camera_busy:
+                            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stop failed, camera not busy")
+                        else:
+                            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stopping video recording")
+                            stop_event.set()
+                            self.camera_busy = False
                     elif tc is self.SELFIE_OPCODE:
-                        self.camera_busy = True
-                        print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Taking a picture")
-                        time.sleep(3) # 3 second delay
-                        camera_utils.take_selfie(picam)
-                        self.camera_busy = False
+                        if self.camera_busy:
+                            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Selfie failed, camera busy")
+                        else:
+                            self.camera_busy = True
+                            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Taking a picture")
+                            time.sleep(3) # 3 second delay
+                            camera_utils.take_selfie(picam)
+                            self.camera_busy = False
 
 
             except UnicodeDecodeError:

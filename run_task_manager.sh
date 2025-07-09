@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p "/home/gtxr/gtxr-picamera/logs"
-exec > "/home/gtxr/gtxr-picamera/logs/main_log.txt" 2>&1
+exec >> "/home/gtxr/gtxr-picamera/logs/main_log.txt" 2>&1
 set -x
 
 # Absolute path to your project directory
