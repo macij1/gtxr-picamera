@@ -2,4 +2,6 @@ videos/
 photos/
 picamvenv/
 .mp4*
-.log
+.log*
+.DS_Store
+

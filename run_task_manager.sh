@@ -1,11 +1,12 @@
 #!/bin/bash
 
-exec > "/home/gtxr/gtxr-picamera/toplog.log" 2>&1
+mkdir -p "/home/gtxr/gtxr-picamera/logs"
+exec > "/home/gtxr/gtxr-picamera/logs/main_log.txt" 2>&1
 set -x
 
 # Absolute path to your project directory
 PROJECT_DIR="/home/gtxr/gtxr-picamera"
-TOP_LOG_DIR="/home/gtxr/gtxr-picamera/toplog.log"
+TOP_LOG_DIR="/home/gtxr/gtxr-picamera/logs/main_log.txt"
 
 # Navigate to the project directory
 cd "$PROJECT_DIR"
