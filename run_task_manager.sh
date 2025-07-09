@@ -14,5 +14,10 @@ cd "$PROJECT_DIR"
 # Activate the virtual environment
 source "picamvenv/bin/activate"
 
-# Run your Python script
-sudo python -u task_manager.py >> "$TOP_LOG_DIR" 2>&1 &
+# Check that the background process is running
+if ! pgrep -f "$SCRIPT" > /dev/null; then
+    echo "$(date): Starting $SCRIPT" >> "$LOG"
+    sudo python -u task_manager.py >> "$TOP_LOG_DIR" 2>&1 &
+else
+    echo "$(date): $SCRIPT already running" >> "$LOG"
+fi
