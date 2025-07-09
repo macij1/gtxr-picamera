@@ -30,8 +30,8 @@ class CameraManager():
         self.video_counter = 0
         self.camera_busy = False
 
-        if not os.path.exists("videos/"):
-            os.makedirs("videos/")
+        if not os.path.exists(self.main_video_path):
+            os.makedirs(self.main_video_path)
         if not os.path.exists("logs/"):
             os.makedirs("logs/")
         if not os.path.exists("photos/"):
