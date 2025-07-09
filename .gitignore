@@ -1,3 +1,5 @@
-videos
-photos
-picamvenv
+videos/
+photos/
+picamvenv/
+.mp4*
+.log
