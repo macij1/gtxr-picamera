@@ -49,7 +49,6 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
 
         segment_length = 30
         encoder = H264Encoder()
-        picam2.start()
 
         i = 0
         start_time = time.time()
@@ -67,9 +66,10 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
     except KeyboardInterrupt:
         print("Stopping recording due to keyboard interrupt.")
     except Exception as e:
-        print("Error: Camera video configuration unsuccessful")   
+        print(f"Error: Camera video configuration unsuccessful: {e}") 
     finally:
-        picam2.stop_recording()
+        if picam2.recording_active:
+            picam2.stop_recording()
         picam2.stop()
 
 
