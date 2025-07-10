@@ -57,7 +57,7 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
             pts_filename = f"{camera_manager.main_video_path}video_{i}.pts"
             print(f"Recording segment: {filename}")
             with open(pts_filename, "w") as pts_output:
-                picam2.start_recording(encoder, filename, pts_output=pts_output)
+                picam2.start_recording(encoder, filename, pts=pts_filename)
                 time.sleep(segment_length)
                 picam2.stop_recording()
             i += 1
@@ -70,8 +70,6 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
     except Exception as e:
         print(f"Error: Camera video configuration unsuccessful: {e}") 
     finally:
-        if picam2.recording_active:
-            picam2.stop_recording()
         picam2.stop()
 
 
