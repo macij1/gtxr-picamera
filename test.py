@@ -72,6 +72,7 @@ class CameraManager():
                             print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stopping video recording")
                             stop_event.set()
                             self.camera_busy = False
+                            camera_thread.join()
                     elif tc is self.SELFIE_OPCODE:
                         if self.camera_busy:
                             print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Selfie failed, camera busy")
@@ -87,6 +88,8 @@ class CameraManager():
                 print("Received malformed data")
             except KeyboardInterrupt:
                 print("Exiting...")
+                stop_event.set()
+                self.camera_busy = False
                 break
             except Exception as e:
                 print(e)
