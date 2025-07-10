@@ -45,5 +45,4 @@ def try_ports():
             # print(f"Failed to open {port}: {e}")
             continue
     else:
-        print("Critical Warning: No available serial ports from the list.")
         return None

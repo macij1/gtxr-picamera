@@ -8,8 +8,7 @@ import camera_utils
 from try_ports import try_ports
 
 """
-Pseudo:
-Constantly listen for commands from the UART port
+Listens for telecommands from the UART port
 Upon receival, parse and immediately complete the task
 """
 class CameraManager():
@@ -101,22 +100,22 @@ class CameraManager():
                 files = glob(f"{self.main_video_path}*")
                 if not files:
                     print("No files found in monitoring")
-                    return 0
+                    continue
                 self.video_counter = len(files)
                 latest_file = max(files, key=os.path.getctime)
                 self.current_video_size = os.path.getsize(latest_file)
 
-                # Log size
+                # Log telemtry to SD card
                 with open(self.size_log_path, "a") as logfile:
                     camera_state_str = f"Camera is busy" if self.camera_busy else f"Camera is free"
-                    count_str = f"Number of recorded segments {float(self.video_counter):.1f} bytes"
+                    count_str = f"Number of recorded segments {float(self.video_counter):.1f}"
                     size_str = f"Latest segment size: {float(self.current_video_size):.1f} bytes"
                     timestamp = datetime.now().isoformat()
                     entry = f"{timestamp}: \t{count_str}\n\t{size_str}\n\t{camera_state_str}"
                     logfile.write(entry + "\n")
                     logfile.flush()
                     
-                # Send telemtry packet
+                # Send telemetry packet
                 busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
                 video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
                 current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
