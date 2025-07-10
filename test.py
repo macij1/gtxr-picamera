@@ -37,106 +37,12 @@ class CameraManager():
             os.makedirs("photos/")
 
         self.gt_port = None
-
         self.gt_buffer.append(self.START_RECORDING_OPCODE)
-
-        # # Open serial port for UART communication with ADCS board
-        # while True:
-        #     try:
-        #         portname = try_ports()
-        #         if portname: 
-        #             self.serial_portname = portname
-        #             self.gt_port = gt_packet.GTPacket(self.serial_portname, 115200)
-        #             break
-        #         else:
-        #             print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Error in serial port opening: All ports were unsuccessful")
-        #             time.sleep(5)
-        #             continue
-        #     except Exception as e:
-        #         print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Error in serial port opening: {e}")
-
-    
-    # Read telecommand 
-    def gt_packet_reader(self):
-        while True:
-            print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Started packet reader")
-            # Blocking serial read
-            payload = self.gt_port.receive()
-            tc = None
-            if self.START_RECORDING_OPCODE in payload:
-                tc =  self.START_RECORDING_OPCODE
-            elif self.SELFIE_OPCODE in payload:
-                tc = self.SELFIE_OPCODE
-            elif self.STOP_RECORDING_OPCODE in payload:
-                tc = self.STOP_RECORDING_OPCODE
-            else:
-                print("Error, found no tc in payload")
-            if tc:
-                print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Found TC: {tc} in payload")
-                self.gt_buffer.append(tc)
-
-    # # Sends the file size to the GT serial port
-    # # 8-byte integers represent the state of the camera, the number of video segments, and the latest segment size
-    # def send_update(self):
-    #     print("\nStarting telemetry thread")
-    #     while True:
-    #         try:
-    #             time.sleep(30)
-    #             print("Forming telemetry gt packet")
-    #             busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
-    #             video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
-    #             current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
-    #             payload = self.TELEMETRY_OPCODE + busy_byte + video_counter_bytes + current_video_size 
-    #             self.gt_port.send(payload)
-    #         except Exception as e:
-    #             print(f"Error in telemetry thread")
-    #             print(e)
-        
-    # Continuously monitors the size of a file and saves timestamped logs to a file
-    def monitor_size(self):
-        print("\nStarting monitor thread")
-        while True:
-            try:
-                time.sleep(5)
-                print("Monitoring size")
-                # Get latest segment size
-                files = glob(f"{self.main_video_path}*")
-                if not files:
-                    print("No files found in monitoring")
-                    return 0
-                self.video_counter = len(files)
-                latest_file = max(files, key=os.path.getctime)
-                self.current_video_size = os.path.getsize(latest_file)
-
-                # Log size
-                with open(self.size_log_path, "a") as logfile:
-                    camera_state_str = f"Camera is busy" if self.camera_busy else f"Camera is free"
-                    count_str = f"Number of recorded segments {float(self.video_counter):.1f} bytes"
-                    size_str = f"Latest segment size: {float(self.current_video_size):.1f} bytes"
-                    timestamp = datetime.now().isoformat()
-                    entry = f"{timestamp}: \t{count_str}\n\t{size_str}\n\t{camera_state_str}"
-                    logfile.write(entry + "\n")
-                    logfile.flush()
-                    
-                # Send telemtry packet
-                busy_byte = (1 if self.camera_busy else 0).to_bytes(4, byteorder='big', signed=True)
-                video_counter_bytes = self.video_counter.to_bytes(4, byteorder='big', signed=True)
-                current_video_size = self.current_video_size.to_bytes(4, byteorder='big', signed=True)
-                payload = self.TELEMETRY_OPCODE + busy_byte + video_counter_bytes + current_video_size 
-                self.gt_port.send(payload)
-            except Exception as e:
-                print("Error in monitor size thread")
-                print(e)
 
     def start(self):
         picam = camera_utils.init_camera()
         stop_event = threading.Event()
         camera_thread = threading.Thread(target=camera_utils.record_h264_segments, args = (picam, self, 7200, stop_event))
-        # monitor_size_thread = threading.Thread(target=self.monitor_size)
-        # gt_packet_reader = threading.Thread(target=self.gt_packet_reader)
-
-        # if self.gt_port:
-        #     gt_packet_reader.start()
             
 
         while True:
@@ -159,7 +65,6 @@ class CameraManager():
                             # Start recording video and monitoring its size
                             self.camera_busy = True
                             camera_thread.start()
-                            monitor_size_thread.start()
                     elif tc is self.STOP_RECORDING_OPCODE:
                         if not self.camera_busy:
                             print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Stop failed, camera not busy")
