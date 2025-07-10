@@ -39,7 +39,7 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
             main={"size": (640, 480), "format": "XBGR8888"},
             controls={
                 "FrameDurationLimits": (8333, 8333),  # 1/120 sec = 8333 μs
-                "ExposureTime": 300,  # Very short exposure (μs), adjust as needed
+                "ExposureTime": 10000,  # Very short exposure (μs), adjust as needed
                 "AnalogueGain": 1.0,  # Low ISO, expecting high light
                 "NoiseReductionMode": 0,  # cdn_off equivalent
             }
