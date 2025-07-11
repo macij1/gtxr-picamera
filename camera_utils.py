@@ -15,7 +15,7 @@ def take_selfie(picam2):
     Captures a high-quality still image using the Pi Camera v1.2.
     The image is saved with a timestamp in the filename.
     """
-    # Pi Camera v1.2 max resolution: 3280×2464
+    # PiCamv2.1 max resolution: (3280,2464), PiCamv3  defaults to (4608, 2592)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = f"photos/selfie_{ts}.jpg"
 
@@ -36,7 +36,7 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
     try:
         # Configuration
         video_config = picam2.create_video_configuration(
-            main={"size": (640, 480), "format": "XBGR8888"},
+            main={"size": (640, 480), "format": "XBGR8888"}, # for PiCamv3,this defaults to (1536, 864)
             controls={
                 "FrameDurationLimits": (8333, 8333),  # 1/120 sec = 8333 μs
                 #"ExposureTime": 300,  # Very short exposure (μs), adjust as needed

@@ -37,7 +37,7 @@ class CameraManager():
             os.makedirs("photos/")
 
         self.gt_port = None
-        self.gt_buffer.append(self.START_RECORDING_OPCODE)
+        self.gt_buffer.append(self.SELFIE_OPCODE)
 
     def start(self):
         picam = camera_utils.init_camera()
