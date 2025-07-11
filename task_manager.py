@@ -20,6 +20,7 @@ class CameraManager():
     
     def __init__(self):
         self.gt_buffer = []
+        self.gt_buffer_max_size = 20 # makes it a circular buffer
         self.serial_portname = ""
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.main_video_path = f"videos_{ts}/"
@@ -70,6 +71,11 @@ class CameraManager():
                 print("Error, found no tc in payload")
             if tc:
                 print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Found TC: {tc} in payload")
+
+                # Circular buffer: if full, pop oldest
+                if len(self.gt_buffer) >= self.gt_buffer_max_size:
+                    print(f"Warnning, gt circular buffer filled up with max size {self.gt_buffer_max_size}")
+                    self.gt_buffer.pop()
                 self.gt_buffer.append(tc)
 
     # # Sends the file size to the GT serial port
