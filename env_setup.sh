@@ -12,9 +12,9 @@ green_bold() {
 
 check_config_txt() {
   if grep -q '^enable_uart=1' /boot/config.txt; then
-    green_bold "[OK] enable_uart=1 found in /boot/config.txt"
+    green_bold "[OK] enable_uart=1 found in /boot/firmware/config.txt"
   else
-    red_bold "[WARN] Missing or incorrect: enable_uart=1 in /boot/config.txt"
+    red_bold "[WARN] Missing or incorrect: enable_uart=1 in /boot/firmware/config.txt"
   fi
 
   if grep -q '^dtoverlay=dwc2' /boot/config.txt; then
@@ -37,6 +37,15 @@ echo "=== CONFIG CHECK: Serial Communication ============"
 check_config_txt
 check_cmdline_txt
 echo "=== CONFIG =================="
+
+sudo nmcli connection add type wifi \
+con-name "starlink" \
+ifname wlan0 \
+ssid "PXLLAB" \
+wifi-sec.key-mgmt wpa-psk \
+wifi-sec.psk 'Slu123!8910' \
+connection.autoconnect yes
+sudo nmcli connection modify starlink connection.autoconnect-priority 100
 
 echo "Enabling serial communication, tying console to ttyGS0"
 sudo systemctl enable serial-getty@ttyGS0.service || echo "Warning, serial port not up"
@@ -64,6 +73,7 @@ pip install mock-serial
 
 # Re-run apt install in case needed again (redundant)
 sudo apt install -y python3-picamera2 --no-install-recommends
+
 
 # Activate venvs and run python tasks if desired
 # source picamenv/bin/activate
