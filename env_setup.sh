@@ -2,6 +2,47 @@
 
 set -e  # Exit on error
 
+ed_bold() {
+  echo -e "\033[1;31m$1\033[0m"
+}
+
+green_bold() {
+  echo -e "\033[1;32m$1\033[0m"
+}
+
+check_config_txt() {
+  if grep -q '^enable_uart=1' /boot/config.txt; then
+    green_bold "[OK] enable_uart=1 found in /boot/config.txt"
+  else
+    red_bold "[WARN] Missing or incorrect: enable_uart=1 in /boot/config.txt"
+  fi
+
+  if grep -q '^dtoverlay=dwc2' /boot/config.txt; then
+    green_bold "[OK] dtoverlay=dwc2 found in /boot/config.txt"
+  else
+    red_bold "[WARN] Missing: dtoverlay=dwc2 in /boot/config.txt"
+  fi
+}
+
+check_cmdline_txt() {
+  CMDLINE=$(cat /boot/cmdline.txt)
+  if echo "$CMDLINE" | grep -q "modules-load=dwc2,g_serial"; then
+    green_bold "[OK] modules-load=dwc2,g_serial found in /boot/cmdline.txt"
+  else
+    red_bold "[WARN] Missing: modules-load=dwc2,g_serial in /boot/cmdline.txt"
+  fi
+}
+
+echo "=== CONFIG CHECK: Serial Communication ============"
+check_config_txt
+check_cmdline_txt
+echo "=== CONFIG =================="
+
+echo "Enabling serial communication, tying console to ttyGS0"
+sudo systemctl enable serial-getty@ttyGS0.service || echo "Warning, serial port not up"
+sudo systemctl start serial-getty@ttyGS0.service || echo "Warning, serial port not up"
+sudo systemctl is-active serial-getty@ttyGS0.service
+
 echo "Installing system dependencies..."
 sudo apt update
 sudo apt install -y python3-picamera2 --no-install-recommends
@@ -27,4 +68,4 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 # Activate venvs and run python tasks if desired
 # source picamenv/bin/activate
 
-echo "Setup complete. Environment 'picamvenv' is ready."
+echo "Setup complete. Environment 'picamvenv' is ready. The system will reboot now..."
