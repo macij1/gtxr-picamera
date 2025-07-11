@@ -2,7 +2,7 @@
 
 set -e  # Exit on error
 
-ed_bold() {
+red_bold() {
   echo -e "\033[1;31m$1\033[0m"
 }
 
