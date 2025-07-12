@@ -34,7 +34,7 @@ class CameraManager():
             try:
                 time.sleep(3)
                 # Get latest segment size
-                files = glob(f"{self.main_video_path}*")
+                files = glob(f"{self.main_video_path}*.h264")
                 if not files:
                     print("No files found in monitoring")
                     continue

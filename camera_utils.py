@@ -58,7 +58,7 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
         start_time = time.time()
         while not (stop_event and stop_event.is_set()):
             filename = f"{camera_manager.main_video_path}video_{i:03d}.h264"
-            pts_filename = f"{camera_manager.main_video_path}video_{i}.pts"
+            pts_filename = f"{camera_manager.main_video_path}video_{i:03d}.pts"
             print(f"Recording segment: {filename}")
             with open(pts_filename, "w") as pts_output:
                 picam2.start_recording(encoder, filename, pts=pts_filename)
