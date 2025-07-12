@@ -6,7 +6,7 @@ set -x
 
 # Absolute path to your project directory
 PROJECT_DIR="/home/gtxr/gtxr-picamera"
-date=$(date +%Y-%m-%d)
+date=$(date +%Y-%m-%d_%H-%M-%S)
 TOP_LOG="/home/gtxr/gtxr-picamera/logs/main_log_${date}.txt"
 
 # Navigate to the project directory
