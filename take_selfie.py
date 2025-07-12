@@ -34,6 +34,7 @@ class CameraManager():
                         print(f"{count}")
                     camera_utils.take_selfie(picam)
                     self.camera_busy = False
+                    return
 
             except UnicodeDecodeError:
                 print("Received malformed data")
@@ -53,3 +54,4 @@ if __name__ == "__main__":
     
     print("Camera Manager Ready, ROUTINE STARTED")
     cam_manager.start()
+    exit()
