@@ -23,4 +23,7 @@ echo "$(date): Running selfie script" | "$TOP_LOG"
 sudo /home/gtxr/gtxr-picamera/picamvenv/bin/python -u take_selfie.py
 
 echo "$(date): Re-starting the video recording" | "$TOP_LOG"
-sudo /bin/bash /home/gtxr/gtxr-picamera/run_task_manager.sh
+nohup sudo /bin/bash /home/gtxr/gtxr-picamera/run_task_manager.sh &
+
+exit 0
+
