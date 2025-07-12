@@ -7,7 +7,11 @@ import os
 import subprocess
 
 def init_camera():
-    picam2 = Picamera2()
+    try:
+        picam2 = Picamera2()
+    except Exception as e:
+        print(f"No cams available: {e}")
+        return None
     return picam2
 
 def take_selfie(picam2):

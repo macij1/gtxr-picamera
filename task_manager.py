@@ -58,6 +58,10 @@ class CameraManager():
 
     def start(self):
         picam = camera_utils.init_camera()
+        while picam is None:
+            time.sleep(2)
+            picam = camera_utils.init_camera()
+                
         stop_event = threading.Event()
         camera_thread = threading.Thread(target=camera_utils.record_h264_segments, args = (picam, self, 7200, stop_event))
         monitor_size_thread = threading.Thread(target=self.monitor_size)
