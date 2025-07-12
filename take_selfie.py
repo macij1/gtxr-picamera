@@ -32,6 +32,7 @@ class CameraManager():
                     print(f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}: Taking a picture in ...")
                     for count in range(10):
                         print(f"{count}")
+                        time.sleep(1)
                     camera_utils.take_selfie(picam)
                     self.camera_busy = False
                     return
