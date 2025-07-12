@@ -7,7 +7,7 @@ import gt_packet
 import camera_utils
 from try_ports import try_ports
 
-class PhotoManager():
+class CameraManager():
     
     def __init__(self):
         self.gt_buffer = []
