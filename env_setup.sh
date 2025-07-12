@@ -18,18 +18,18 @@ check_config_txt() {
   fi
 
   if grep -q '^dtoverlay=dwc2' /boot/config.txt; then
-    green_bold "[OK] dtoverlay=dwc2 found in /boot/config.txt"
+    green_bold "[OK] dtoverlay=dwc2 found in /boot/firmware/config.txt"
   else
-    red_bold "[WARN] Missing: dtoverlay=dwc2 in /boot/config.txt"
+    red_bold "[WARN] Missing: dtoverlay=dwc2 in /boot/firmware/config.txt"
   fi
 }
 
 check_cmdline_txt() {
   CMDLINE=$(cat /boot/cmdline.txt)
   if echo "$CMDLINE" | grep -q "modules-load=dwc2,g_serial"; then
-    green_bold "[OK] modules-load=dwc2,g_serial found in /boot/cmdline.txt"
+    green_bold "[OK] modules-load=dwc2,g_serial found in /boot/firmware/cmdline.txt"
   else
-    red_bold "[WARN] Missing: modules-load=dwc2,g_serial in /boot/cmdline.txt"
+    red_bold "[WARN] Missing: modules-load=dwc2,g_serial in /boot/firmware/cmdline.txt"
   fi
 }
 
@@ -45,7 +45,7 @@ ssid "PXLLAB" \
 wifi-sec.key-mgmt wpa-psk \
 wifi-sec.psk 'Slu123!8910' \
 connection.autoconnect yes
-sudo nmcli connection modify starlink connection.autoconnect-priority 100
+
 
 echo "Enabling serial communication, tying console to ttyGS0"
 sudo systemctl enable serial-getty@ttyGS0.service || echo "Warning, serial port not up"
