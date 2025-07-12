@@ -25,8 +25,6 @@ sudo pkill -f "task"
 echo "$(date): Running selfie script"
 sudo "$PROJECT_DIR/picamvenv/bin/python" -u take_selfie.py
 
-# Restart task manager in background
-echo "$(date): Re-starting the video recording"
-nohup sudo /bin/bash "$PROJECT_DIR/run_task_manager.sh"
+echo "$(date): Remember to check the cronjob restart!"
 
 exit 0
