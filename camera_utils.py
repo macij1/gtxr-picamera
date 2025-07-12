@@ -25,7 +25,12 @@ def take_selfie(picam2):
 
     try:
         # Configure for still capture at max quality
-        config = picam2.create_still_configuration(main={"size": (3280, 2464)})
+        config = picam2.create_still_configuration(
+            main={"size": (3280, 2464)}, 
+            controls={
+                "AfMode": 0,            # 0 = Manual focus
+                "LensPosition": 0.0     # 0.0 ≈ infinity
+            })
         picam2.configure(config)
         picam2.start()
         picam2.capture_file(path)
@@ -46,8 +51,9 @@ def record_h264_segments(picam2, camera_manager, duration=7200, stop_event=None)
                 #"ExposureTime": 300,  # Very short exposure (μs), adjust as needed
                 #"AnalogueGain": 1.0,  # Low ISO, expecting high light
                 "NoiseReductionMode": 0,  # cdn_off equivalent
-            }
-        )
+                "AfMode": 0,            # 0 = Manual focus
+                "LensPosition": 0.0     # 0.0 ≈ infinity
+            })
         picam2.configure(video_config)
         picam2.start()
 
